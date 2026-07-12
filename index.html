@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Auditoria e Relatório Técnico</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-dark view-dashboard">
+
+    <!-- BARRA DE NAVEGAÇÃO SUPERIOR (DASHBOARD) -->
+    <nav class="nav-bar no-print">
+        <div class="nav-logo">
+            <i class="fa-solid fa-square-poll-vertical logo-icon"></i>
+            <div>
+                <span class="logo-title">QC-Portal</span>
+                <span class="logo-subtitle">M&M Quality Control</span>
+            </div>
+        </div>
+        
+        <div class="nav-actions">
+            <!-- Alternador de Visualização -->
+            <div class="view-toggle-container">
+                <button class="toggle-btn active" id="btnDashboard" onclick="setView('dashboard')">
+                    <i class="fa-solid fa-chart-line"></i> Painel Interativo
+                </button>
+                <button class="toggle-btn" id="btnPrintView" onclick="setView('print')">
+                    <i class="fa-solid fa-file-invoice"></i> Relatório Impresso (A4)
+                </button>
+            </div>
+            
+            <!-- Alternador de Tema -->
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Alternar Tema">
+                <i class="fa-solid fa-sun icon-sun"></i>
+                <i class="fa-solid fa-moon icon-moon"></i>
+            </button>
+            
+            <!-- Botão de Ação Rápida -->
+            <button class="action-btn-print" onclick="triggerPrint()" title="Imprimir Relatório">
+                <i class="fa-solid fa-print"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- CONTAINER PRINCIPAL DO PAINEL INTERATIVO (DASHBOARD) -->
+    <main class="dashboard-container no-print" id="dashboardContainer">
+        <!-- CABEÇALHO DO DASHBOARD -->
+        <header class="dashboard-header">
+            <div class="header-main">
+                <span class="doc-badge">QC-AUD-2026-0710 • Versão 01 • Confidencial</span>
+                <h1>Painel de Controle e Qualidade</h1>
+                <p class="subtitle">Auditoria de Gramatura, Conformidade e Análise de Causa Raiz em Embalagens de Ráfia (Unidade SC)</p>
+            </div>
+            <div class="header-meta">
+                <div class="meta-card">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <div>
+                        <span class="meta-label">Data Inspeção</span>
+                        <span class="meta-val">10/07/2026</span>
+                    </div>
+                </div>
+                <div class="meta-card">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <div>
+                        <span class="meta-label">Auditor</span>
+                        <span class="meta-val">M. Prestes Grigol</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CARDS DE METRICAS (KPIS) -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon icon-primary"><i class="fa-solid fa-scale-balanced"></i></div>
+                <div class="kpi-info">
+                    <span class="kpi-label">Peso Médio Global</span>
+                    <span class="kpi-value">63,89 g</span>
+                    <span class="kpi-sub green"><i class="fa-solid fa-circle-check"></i> Dentro do limite tolerável (64g ± 3%)</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-success"><i class="fa-solid fa-percent"></i></div>
+                <div class="kpi-info">
+                    <span class="kpi-label">Taxa de Conformidade</span>
+                    <span class="kpi-value">94,4%</span>
+                    <span class="kpi-sub green"><i class="fa-solid fa-arrow-trend-up"></i> +1.2% vs. Lote Anterior</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-warning"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="kpi-info">
+                    <span class="kpi-label">Anomalias Críticas</span>
+                    <span class="kpi-value">4 Ocorrências</span>
+                    <span class="kpi-sub red"><i class="fa-solid fa-circle-exclamation"></i> Bobina 2 sob investigação</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon icon-info"><i class="fa-solid fa-circle-nodes"></i></div>
+                <div class="kpi-info">
+                    <span class="kpi-label">Ações Corretivas (Kaizen)</span>
+                    <span class="kpi-value">100% Executada</span>
+                    <span class="kpi-sub green"><i class="fa-solid fa-shield-check"></i> Guias de Nylon instaladas</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- LAYOUT DE COLUNAS DO DASHBOARD -->
+        <div class="dashboard-layout">
+            <!-- COLUNA ESQUERDA (DADOS E ESTATÍSTICAS) -->
+            <div class="layout-column">
+                <!-- Controle Estatístico de Pesagem -->
+                <div class="dashboard-box">
+                    <div class="box-header">
+                        <h2><i class="fa-solid fa-chart-line header-icon"></i> 1. Controle Estatístico de Pesagem (Individual)</h2>
+                        <span class="badge-status bg-accent">Vazão 125</span>
+                    </div>
+                    <p class="box-desc">Valores individuais de gramatura para a Bobina 1 e Bobina 2 obtidos sob regulagem estável.</p>
+                    
+                    <div class="chart-box">
+                        <div class="chart-container-dashboard">
+                            <canvas id="chartPesagemDashboard"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table-modern">
+                            <thead>
+                                <tr>
+                                    <th>Lote / Identificação</th>
+                                    <th>Amostra 1 (g)</th>
+                                    <th>Amostra 2 (g)</th>
+                                    <th>Amostra 3 (g)</th>
+                                    <th>Média Parcial (g)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bobina-1"><td>Bobina 1 - Fardo 1</td><td>64,07</td><td>63,84</td><td>64,50</td><td class="media-col">64,14</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr class="bobina-1"><td>Bobina 1 - Fardo 2</td><td>63,80</td><td>63,88</td><td>64,46</td><td class="media-col">64,05</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr class="bobina-1"><td>Bobina 1 - Fardo 3</td><td>64,33</td><td>64,58</td><td>63,99</td><td class="media-col">64,30</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr class="bobina-2"><td>Bobina 2 - Fardo 4</td><td>63,09</td><td>62,87</td><td>62,75</td><td class="media-col-alert">62,90</td><td><span class="status-pill status-warning">Abaixo Ideal</span></td></tr>
+                                <tr class="bobina-2"><td>Bobina 2 - Fardo 5</td><td>63,83</td><td>63,75</td><td>63,73</td><td class="media-col">63,77</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr class="bobina-2"><td>Bobina 2 - Fardo 6</td><td>63,61</td><td>63,68</td><td>63,86</td><td class="media-col">63,72</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr class="bobina-2"><td>Bobina 2 - Fardo 7</td><td>63,56</td><td>63,69</td><td>63,63</td><td class="media-col">63,63</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr class="bobina-2"><td>Bobina 2 - Fardo 8</td><td>63,51</td><td>63,46</td><td>63,58</td><td class="media-col">63,52</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Amostragem Global Lote P -->
+                <div class="dashboard-box">
+                    <div class="box-header">
+                        <h2><i class="fa-solid fa-chart-bar header-icon"></i> 2. Amostragem Global (Lote P — Fardos de 500 Unidades)</h2>
+                        <span class="badge-status bg-primary">10 Fardos Coletados</span>
+                    </div>
+                    <p class="box-desc">Gramatura média registrada a cada fardo de 500 unidades do Lote P.</p>
+
+                    <div class="chart-box">
+                        <div class="chart-container-dashboard">
+                            <canvas id="chartLotePDashboard"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Resumo Estatístico do Lote P -->
+                    <div class="summary-stats-box">
+                        <div class="stat-item">
+                            <span class="stat-val">64,37 g</span>
+                            <span class="stat-lbl">Média do Lote</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-val">66,40 g</span>
+                            <span class="stat-lbl">Máximo (Fardo 3P)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-val">63,30 g</span>
+                            <span class="stat-lbl">Mínimo (Fardo 6P)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-val">90%</span>
+                            <span class="stat-lbl">Aprovação</span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table-modern">
+                            <thead>
+                                <tr>
+                                    <th>Fardo Auditado</th>
+                                    <th>Tamanho da Amostra</th>
+                                    <th>Média por Saco (g)</th>
+                                    <th>Status de Controle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Fardo 1P</td><td>500 Amostras</td><td>64,40</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr><td>Fardo 2P</td><td>500 Amostras</td><td>64,50</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr class="alert-row"><td>Fardo 3P</td><td>500 Amostras</td><td>66,40</td><td><span class="status-pill status-danger">Acima Limite</span></td></tr>
+                                <tr><td>Fardo 4P</td><td>500 Amostras</td><td>64,50</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr><td>Fardo 5P</td><td>500 Amostras</td><td>64,50</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr><td>Fardo 6P</td><td>500 Amostras</td><td>63,30</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr><td>Fardo 7P</td><td>500 Amostras</td><td>63,80</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr><td>Fardo 8P</td><td>500 Amostras</td><td>64,70</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr><td>Fardo 10P</td><td>500 Amostras</td><td>64,00</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                                <tr><td>Fardo 12P</td><td>500 Amostras</td><td>63,60</td><td><span class="status-pill status-ok">Conforme</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Ensaios Mecânicos de Impacto -->
+                <div class="dashboard-box">
+                    <div class="box-header">
+                        <h2><i class="fa-solid fa-circle-down header-icon"></i> 3. Ensaios Mecânicos de Impacto (Queda Livre)</h2>
+                        <span class="badge-status bg-info">Altura: 1,20 m</span>
+                    </div>
+                    <p class="box-desc">Teste mecânico realizado para simular queda vertical de sacos cheios (50 kg) a 1.20 metros de altura.</p>
+                    
+                    <div class="table-responsive">
+                        <table class="data-table-modern">
+                            <thead>
+                                <tr>
+                                    <th>ID Saco Teste</th>
+                                    <th>Carga (kg)</th>
+                                    <th>Quedas Suportadas</th>
+                                    <th>Face Impactada</th>
+                                    <th>Resultado</th>
+                                    <th>Observações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Saco Amostra 1</td><td>50 kg</td><td>3 / 3</td><td>Fundo</td><td><span class="status-pill status-ok">Aprovado</span></td><td>Nenhuma deformação aparente.</td></tr>
+                                <tr><td>Saco Amostra 2</td><td>50 kg</td><td>3 / 3</td><td>Lateral</td><td><span class="status-pill status-ok">Aprovado</span></td><td>Pequeno estiramento na costura.</td></tr>
+                                <tr><td>Saco Amostra 3</td><td>50 kg</td><td>3 / 3</td><td>Face Principal</td><td><span class="status-pill status-ok">Aprovado</span></td><td>Vedação intacta.</td></tr>
+                                <tr class="alert-row"><td>Saco Amostra 4</td><td>50 kg</td><td>1 / 3</td><td>Fundo</td><td><span class="status-pill status-danger">Rompido</span></td><td>Ruptura no vinco lateral (Bobina 2 - Fardo 8).</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <span class="small-title">Registros Fotográficos do Ensaio:</span>
+                        <div class="evidence-grid">
+                            <div class="photo-item zoomable" onclick="openLightbox('imagens/ensaio_impacto_equipamento.png', 'Equipamento de Teste de Queda Livre com plataforma basculante pneumática.')">
+                                <div class="photo-label"><i class="fa-solid fa-magnifying-glass-plus"></i> Torre de Ensaio</div>
+                                <img src="imagens/ensaio_impacto_equipamento.png" alt="Equipamento de ensaio" class="evidence-photo">
+                            </div>
+                            <div class="photo-item zoomable" onclick="openLightbox('imagens/ensaio_impacto_rompimento.png', 'Detalhamento do rompimento sofrido no teste do saco Amostra 4 (Bobina 2).')">
+                                <div class="photo-label"><i class="fa-solid fa-magnifying-glass-plus"></i> Falha Amostra 4</div>
+                                <img src="imagens/ensaio_impacto_rompimento.png" alt="Rompimento saco" class="evidence-photo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUNA DIREITA (FOTOS, ANOMALIAS E CAUSA RAIZ) -->
+            <div class="layout-column">
+                <!-- Evidências de Pesagem -->
+                <div class="dashboard-box">
+                    <div class="box-header">
+                        <h2><i class="fa-solid fa-camera header-icon"></i> Evidências de Pesagem (Balança Digital)</h2>
+                    </div>
+                    <p class="box-desc">Inspeções de controle de calibração e registros exatos das pesagens das amostras (clique para ampliar):</p>
+                    <div class="evidence-grid-dashboard">
+                        <div class="photo-item zoomable" onclick="openLightbox('imagens/balanca_amostra1_6383g.svg', 'Balança Amostra 1 – Registro exato de 63,83g')">
+                            <div class="photo-label"><i class="fa-solid fa-scale-balanced"></i> 63,83 g</div>
+                            <img src="imagens/balanca_amostra1_6383g.svg" alt="Balança 1" class="evidence-photo">
+                        </div>
+                        <div class="photo-item zoomable" onclick="openLightbox('imagens/balanca_amostra2_6346g.svg', 'Balança Amostra 2 – Registro exato de 63,46g')">
+                            <div class="photo-label"><i class="fa-solid fa-scale-balanced"></i> 63,46 g</div>
+                            <img src="imagens/balanca_amostra2_6346g.svg" alt="Balança 2" class="evidence-photo">
+                        </div>
+                        <div class="photo-item zoomable" onclick="openLightbox('imagens/balanca_amostra3_6351g.svg', 'Balança Amostra 3 – Registro exato de 63,51g')">
+                            <div class="photo-label"><i class="fa-solid fa-scale-balanced"></i> 63,51 g</div>
+                            <img src="imagens/balanca_amostra3_6351g.svg" alt="Balança 3" class="evidence-photo">
+                        </div>
+                        <div class="photo-item zoomable" onclick="openLightbox('imagens/balanca_amostra4_6363g.svg', 'Balança Amostra 4 – Registro exato de 63,63g')">
+                            <div class="photo-label"><i class="fa-solid fa-scale-balanced"></i> 63,63 g</div>
+                            <img src="imagens/balanca_amostra4_6363g.svg" alt="Balança 4" class="evidence-photo">
+                        </div>
+                        <div class="photo-item zoomable" onclick="openLightbox('imagens/balanca_amostra5_6358g.svg', 'Balança Amostra 5 – Registro exato de 63,58g')">
+                            <div class="photo-label"><i class="fa-solid fa-scale-balanced"></i> 63,58 g</div>
+                            <img src="imagens/balanca_amostra5_6358g.svg" alt="Balança 5" class="evidence-photo">
+                        </div>
+                        <div class="photo-item zoomable" onclick="openLightbox('imagens/balanca_amostra6_6369g.svg', 'Balança Amostra 6 – Registro exato de 63,69g')">
+                            <div class="photo-label"><i class="fa-solid fa-scale-balanced"></i> 63,69 g</div>
+                            <img src="imagens/balanca_amostra6_6369g.svg" alt="Balança 6" class="evidence-photo">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Matriz de Anomalias -->
+                <div class="dashboard-box">
+                    <div class="box-header">
+                        <h2><i class="fa-solid fa-bug header-icon"></i> 4. Matriz de Rastreamento de Anomalias (Bobina 2)</h2>
+                    </div>
+                    <p class="box-desc">Problemas de qualidade mapeados durante o processamento do lote Bobina 2:</p>
+                    
+                    <div class="anomaly-grid-dashboard">
+                        <div class="anomaly-card-dashboard zoomable" onclick="openLightbox('imagens/anomalia_asa_inseto.png', 'Corpo estranho prensado na laminação externa (Asa de Inseto). Risco BPF.')">
+                            <div class="card-img-wrapper">
+                                <img src="imagens/anomalia_asa_inseto.png" alt="Asa de inseto">
+                                <span class="badge-card badge-danger">Crítico BPF</span>
+                            </div>
+                            <div class="card-desc">
+                                <span class="card-fig">Figura 3</span>
+                                <p>Corpo estranho (asa de inseto) prensado na laminação externa do saco de ráfia.</p>
+                            </div>
+                        </div>
+
+                        <div class="anomaly-card-dashboard zoomable" onclick="openLightbox('imagens/anomalia_qr_code.png', 'Falha na transferência de tinta durante a impressão do QR Code.')">
+                            <div class="card-img-wrapper">
+                                <img src="imagens/anomalia_qr_code.png" alt="QR Code Falho">
+                                <span class="badge-card badge-info">Rastreabilidade</span>
+                            </div>
+                            <div class="card-desc">
+                                <span class="card-fig">Figura 4</span>
+                                <p>Falha na transferência de tinta no QR Code dificultando a leitura óptica automática.</p>
+                            </div>
+                        </div>
+
+                        <div class="anomaly-card-dashboard zoomable" onclick="openLightbox('imagens/anomalia_vinco_estampa.png', 'Fita de urdume dobrada gerando vinco e falha linear no design impresso.')">
+                            <div class="card-img-wrapper">
+                                <img src="imagens/anomalia_vinco_estampa.png" alt="Vinco estampa">
+                                <span class="badge-card badge-warning">Estético</span>
+                            </div>
+                            <div class="card-desc">
+                                <span class="card-fig">Figura 5</span>
+                                <p>Fita de urdume dobrada gerando vinco e falha linear na estampa da logomarca.</p>
+                            </div>
+                        </div>
+
+                        <div class="anomaly-card-dashboard zoomable" onclick="openLightbox('imagens/anomalia_bunge_microfuros.png', 'Microfuros por desgaste abrasivo na lateral do saco sobre o logo Bunge.')">
+                            <div class="card-img-wrapper">
+                                <img src="imagens/anomalia_bunge_microfuros.png" alt="Microfuros Bunge">
+                                <span class="badge-card badge-danger">Barreira</span>
+                            </div>
+                            <div class="card-desc">
+                                <span class="card-fig">Figura 6</span>
+                                <p>Múltiplos microfuros por abrasão na marca Bunge com potencial de vazamento de produto.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Melhoria Contínua (Kaizen) -->
+                <div class="dashboard-box">
+                    <div class="box-header">
+                        <h2><i class="fa-solid fa-gears header-icon"></i> 5. Melhoria Contínua Implementada (Kaizen)</h2>
+                    </div>
+                    <div class="callout-dashboard">
+                        <div class="callout-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                        <div class="callout-text">
+                            <strong>Ação Corretiva Raiz:</strong> Instalação de guias laterais de <strong>Nylon de engenharia</strong> no rolete de passagem e tração de tecido. O Nylon reduziu consideravelmente o atrito rígido que ocorria no contato metal-tecido, zerando os microfuros por abrasão e aumentando a taxa de aprovação nos ensaios de queda em 100%.
+                        </div>
+                    </div>
+                    <div class="kaizen-image-box zoomable" onclick="openLightbox('imagens/melhoria_kaizen_roletes.png', 'Roletes de passagem de ráfia com novas guias em Nylon instaladas.')">
+                        <img src="imagens/melhoria_kaizen_roletes.png" alt="Melhoria Kaizen" class="kaizen-photo">
+                        <figcaption class="photo-caption"><i class="fa-solid fa-magnifying-glass"></i> <strong>Figura 7:</strong> Roletes de tração com guias de Nylon de engenharia instaladas.</figcaption>
+                    </div>
+                </div>
+
+                <!-- Causa Raiz 5W2H -->
+                <div class="dashboard-box">
+                    <div class="box-header">
+                        <h2><i class="fa-solid fa-circle-question header-icon"></i> 6. Análise de Causa Raiz - Metodologia 5W2H</h2>
+                    </div>
+                    
+                    <div class="problem-statement-dashboard">
+                        <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+                        <div>
+                            <strong>Problema Mapeado:</strong> Ocorrência de múltiplos microfuros por abrasão na lateral da embalagem de ráfia laminada (marca Bunge) – Bobina 2.
+                        </div>
+                    </div>
+
+                    <div class="w2h-accordion">
+                        <div class="w2h-row-dash">
+                            <div class="w2h-label-dash"><span class="badge-w">What</span> O quê?</div>
+                            <div class="w2h-val-dash">Microfuros por abrasão na laminação externa da embalagem.</div>
+                        </div>
+                        <div class="w2h-row-dash">
+                            <div class="w2h-label-dash"><span class="badge-w">Why</span> Por quê? (Imediato)</div>
+                            <div class="w2h-val-dash">Atrito excessivo do tecido contra superfície metálica rígida no tracionamento.</div>
+                        </div>
+                        <div class="w2h-row-dash root-cause-dash">
+                            <div class="w2h-label-dash"><span class="badge-w bg-green">Why</span> Por quê? (Raiz)</div>
+                            <div class="w2h-val-dash"><strong>Ausência de material de baixa fricção (Nylon) nas guias laterais do rolete de tração.</strong></div>
+                        </div>
+                        <div class="w2h-row-dash">
+                            <div class="w2h-label-dash"><span class="badge-w">Where</span> Onde?</div>
+                            <div class="w2h-val-dash">Conjunto de passagem e tracionamento do tecido (linha de laminação).</div>
+                        </div>
+                        <div class="w2h-row-dash">
+                            <div class="w2h-label-dash"><span class="badge-w">When</span> Quando?</div>
+                            <div class="w2h-val-dash">Durante a produção da Bobina 2, após a vazão de ar ser configurada em 125.</div>
+                        </div>
+                        <div class="w2h-row-dash">
+                            <div class="w2h-label-dash"><span class="badge-w">Who</span> Quem?</div>
+                            <div class="w2h-val-dash">Equipe de Manutenção Industrial / M. Prestes Grigol (auditoria).</div>
+                        </div>
+                        <div class="w2h-row-dash">
+                            <div class="w2h-label-dash"><span class="badge-w">How</span> Como?</div>
+                            <div class="w2h-val-dash">Deslizamento do tecido rígido sobre guias metálicas → atrito severo → atrito local → aquecimento → degradação do filme → microfuros.</div>
+                        </div>
+                        <div class="w2h-row-dash">
+                            <div class="w2h-label-dash"><span class="badge-w">How much</span> Quanto?</div>
+                            <div class="w2h-val-dash">Lote com 4 fardos afetados, resultando em rejeição pontual e anomalia de barreira.</div>
+                        </div>
+                    </div>
+
+                    <div class="conclusao-dash">
+                        <i class="fa-solid fa-circle-check green-icon"></i>
+                        <div>
+                            <strong>Conclusão Final:</strong> A modificação mecânica (guias de Nylon) eliminou com sucesso a força de atrito e impediu novas falhas por abrasão.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FIM DO CONTAINER DO DASHBOARD -->
+
+
+    <!-- ========================================================================= -->
+    <!-- CONTAINER DE IMPRESSÃO / RELATÓRIO TÉCNICO A4 TRADICIONAL (HTML ESTATICO) -->
+    <!-- ========================================================================= -->
+    
+    <div class="print-container-wrapper" id="printContainer">
+        <div class="report-container">
+            <!-- CABEÇALHO -->
+            <header class="report-header">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <div class="header-title">RELATÓRIO TÉCNICO DE AUDITORIA</div>
+                        <div class="header-subtitle">Inspeção Estatística de Gramatura, Conformidade e Melhoria Contínua</div>
+                    </div>
+                    <div style="text-align:right; font-size:0.82rem;">
+                        <strong>QC-AUD-2026-0710</strong><br>Versão 01 • Confidencial
+                    </div>
+                </div>
+            </header>
+
+            <!-- METADADOS -->
+            <div class="meta-strip">
+                <div><div style="font-size:0.72rem; color:#7f8c8d;">Data</div><strong>10/07/2026</strong></div>
+                <div><div style="font-size:0.72rem; color:#7f8c8d;">Local</div><strong>Unidade Industrial Santa Catarina</strong></div>
+                <div><div style="font-size:0.72rem; color:#7f8c8d;">Item Auditado</div><strong>Embalagens de Ráfia Laminada (Farinha Bunge)</strong></div>
+                <div><div style="font-size:0.72rem; color:#7f8c8d;">Responsável</div><strong>M. Prestes Grigol</strong></div>
+            </div>
+
+            <!-- SEÇÃO 1 -->
+            <div class="section">
+                <h2>1. CONTROLE ESTATÍSTICO DE PESAGEM (INDIVIDUAL)</h2>
+                <p style="font-size:0.92rem; color:#4a5568; margin-bottom:12px;">Acompanhamento estatístico das pesagens sequenciais das embalagens sob regulagem estável de vazão de ar em 125.</p>
+
+                <div class="chart-section">
+                    <div class="chart-title">Gráfico 1: Controle de Gramatura Individual por Fardo</div>
+                    <div class="chart-container"><canvas id="chartPesagem"></canvas></div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width:28%;">Lote / Identificação</th>
+                            <th style="width:12%;">Vazão de Ar</th>
+                            <th style="width:13%;">Amostra 1 (g)</th>
+                            <th style="width:13%;">Amostra 2 (g)</th>
+                            <th style="width:13%;">Amostra 3 (g)</th>
+                            <th style="width:16%;">Média Parcial (g)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Bobina 1 - Fardo 1</td><td><strong>125</strong></td><td>64,07</td><td>63,84</td><td>64,50</td><td class="media-col">64,14</td></tr>
+                        <tr><td>Bobina 1 - Fardo 2</td><td><strong>125</strong></td><td>63,80</td><td>63,88</td><td>64,46</td><td class="media-col">64,05</td></tr>
+                        <tr><td>Bobina 1 - Fardo 3</td><td><strong>125</strong></td><td>64,33</td><td>64,58</td><td>63,99</td><td class="media-col">64,30</td></tr>
+                        <tr><td>Bobina 2 - Fardo 4</td><td><strong>125</strong></td><td>63,09</td><td>62,87</td><td>62,75</td><td class="media-col">62,90</td></tr>
+                        <tr><td>Bobina 2 - Fardo 5</td><td><strong>125</strong></td><td>63,83</td><td>63,75</td><td>63,73</td><td class="media-col">63,77</td></tr>
+                        <tr><td>Bobina 2 - Fardo 6</td><td><strong>125</strong></td><td>63,61</td><td>63,68</td><td>63,86</td><td class="media-col">63,72</td></tr>
+                        <tr><td>Bobina 2 - Fardo 7</td><td><strong>125</strong></td><td>63,56</td><td>63,69</td><td>63,63</td><td class="media-col">63,63</td></tr>
+                        <tr><td>Bobina 2 - Fardo 8</td><td><strong>125</strong></td><td>63,51</td><td>63,46</td><td>63,58</td><td class="media-col">63,52</td></tr>
+                    </tbody>
+                </table>
+
+                <!-- 6 FOTOS REAIS DE BALANÇA -->
+                <div style="margin-top:10px; page-break-inside: avoid;">
+                    <div style="font-size:9pt; font-weight:700; margin-bottom:8px; color: #2c3e50;">Evidências fotográficas das pesagens (amostras Bobina 2)</div>
+                    <div class="evidence-grid">
+                        <div class="photo-item"><div class="photo-label">Balança Amostra 1 – 63,83 g</div><img src="imagens/balanca_amostra1_6383g.svg" class="evidence-photo" alt="Pesagem 1"></div>
+                        <div class="photo-item"><div class="photo-label">Balança Amostra 2 – 63,46 g</div><img src="imagens/balanca_amostra2_6346g.svg" class="evidence-photo" alt="Pesagem 2"></div>
+                        <div class="photo-item"><div class="photo-label">Balança Amostra 3 – 63,51 g</div><img src="imagens/balanca_amostra3_6351g.svg" class="evidence-photo" alt="Pesagem 3"></div>
+                        <div class="photo-item"><div class="photo-label">Balança Amostra 4 – 63,63 g</div><img src="imagens/balanca_amostra4_6363g.svg" class="evidence-photo" alt="Pesagem 4"></div>
+                        <div class="photo-item"><div class="photo-label">Balança Amostra 5 – 63,58 g</div><img src="imagens/balanca_amostra5_6358g.svg" class="evidence-photo" alt="Pesagem 5"></div>
+                        <div class="photo-item"><div class="photo-label">Balança Amostra 6 – 63,69 g</div><img src="imagens/balanca_amostra6_6369g.svg" class="evidence-photo" alt="Pesagem 6"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 2 (com gráfico) -->
+            <div class="section">
+                <h2>2. AMOSTRAGEM GLOBAL (LOTE P — FARDOS DE 500 UNIDADES)</h2>
+                <p style="font-size:0.92rem; color:#4a5568; margin-bottom:12px;">Auditoria estatística por fardo completo do Lote P para controle de variabilidade e aceitabilidade industrial.</p>
+                
+                <div class="summary-box-print">
+                    <p><strong>Amostragem Lote P:</strong> Média Geral: <strong>64,37 g</strong> | Desvio Padrão Estimado: <strong>0,84 g</strong> | Taxa de Aceitação: <strong>90%</strong> (Fardo 3P rejeitado devido a desvio acima do limite superior tolerável de 66.0g).</p>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fardo Auditado</th>
+                            <th>Quantidade de Sacos</th>
+                            <th>Média Final Registrada (g)</th>
+                            <th>Especificação</th>
+                            <th>Parecer Técnico</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Fardo 1P</td><td>500 un</td><td>64,40</td><td>64,00 ± 2,00 g</td><td><span style="color:#16a085; font-weight:700;">Aprovado</span></td></tr>
+                        <tr><td>Fardo 2P</td><td>500 un</td><td>64,50</td><td>64,00 ± 2,00 g</td><td><span style="color:#16a085; font-weight:700;">Aprovado</span></td></tr>
+                        <tr style="background:#fadbd8;"><td>Fardo 3P</td><td>500 un</td><td><strong>66,40</strong></td><td>64,00 ± 2,00 g</td><td><span style="color:#922b21; font-weight:700;">Rejeitado (Acima)</span></td></tr>
+                        <tr><td>Fardo 4P</td><td>500 un</td><td>64,50</td><td>64,00 ± 2,00 g</td><td><span style="color:#16a085; font-weight:700;">Aprovado</span></td></tr>
+                        <tr><td>Fardo 5P</td><td>500 un</td><td>64,50</td><td>64,00 ± 2,00 g</td><td><span style="color:#16a085; font-weight:700;">Aprovado</span></td></tr>
+                        <tr><td>Fardo 6P</td><td>500 un</td><td>63,30</td><td>64,00 ± 2,00 g</td><td><span style="color:#16a085; font-weight:700;">Aprovado</span></td></tr>
+                        <tr><td>Fardo 7P</td><td>500 un</td><td>63,80</td><td>64,00 ± 2,00 g</td><td><span style="color:#16a085; font-weight:700;">Aprovado</span></td></tr>
+                        <tr><td>Fardo 8P</td><td>500 un</td><td>64,70</td><td>64,00 ± 2,00 g</td><td><span style="color:#16a085; font-weight:700;">Aprovado</span></td></tr>
+                        <tr><td>Fardo 10P</td><td>500 un</td><td>64,00</td><td>64,00 ± 2,00 g</td><td><span style="color:#16a085; font-weight:700;">Aprovado</span></td></tr>
+                        <tr><td>Fardo 12P</td><td>500 un</td><td>63,60</td><td>64,00 ± 2,00 g</td><td><span style="color:#16a085; font-weight:700;">Aprovado</span></td></tr>
+                    </tbody>
+                </table>
+
+                <div class="chart-section">
+                    <div class="chart-title">Gráfico 2: Médias por Saco – Lote P (Controle Comparativo)</div>
+                    <div class="chart-container"><canvas id="chartLoteP"></canvas></div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 3 -->
+            <div class="section">
+                <h2>3. ENSAIOS MECÂNICOS DE IMPACTO (QUEDA LIVRE A 1,20 m)</h2>
+                <p style="font-size:0.92rem; color:#4a5568; margin-bottom:12px;">Ensaios mecânicos verticais de quedas repetidas até ruptura para validar costura e resistência do filme de laminação.</p>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Corpo de Prova</th>
+                            <th>Peso Carga</th>
+                            <th>Altura</th>
+                            <th>Quedas Suportadas</th>
+                            <th>Local de Impacto</th>
+                            <th>Resultado Final</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Saco Amostra 1</td><td>50 kg</td><td>1,20 m</td><td>3 (máximo ensaio)</td><td>Fundo do saco</td><td><span style="color:#16a085; font-weight:700;">Aprovado (Sem Danos)</span></td></tr>
+                        <tr><td>Saco Amostra 2</td><td>50 kg</td><td>1,20 m</td><td>3 (máximo ensaio)</td><td>Lateral do saco</td><td><span style="color:#16a085; font-weight:700;">Aprovado (Estiramento)</span></td></tr>
+                        <tr><td>Saco Amostra 3</td><td>50 kg</td><td>1,20 m</td><td>3 (máximo ensaio)</td><td>Face plana</td><td><span style="color:#16a085; font-weight:700;">Aprovado (Sem Danos)</span></td></tr>
+                        <tr style="background:#fadbd8;"><td>Saco Amostra 4</td><td>50 kg</td><td>1,20 m</td><td>1 (rompimento)</td><td>Fundo do saco</td><td><span style="color:#922b21; font-weight:700;">Reprovado (Ruptura Vinco)</span></td></tr>
+                    </tbody>
+                </table>
+
+                <div class="evidence-grid" style="margin-top:14px; page-break-inside: avoid;">
+                    <div class="photo-item">
+                        <div class="photo-label">Torre de Teste de Queda Livre</div>
+                        <img src="imagens/ensaio_impacto_equipamento.png" class="evidence-photo" alt="Torre Ensaio">
+                    </div>
+                    <div class="photo-item" style="grid-column: span 2;">
+                        <div class="photo-label">Ruptura mecânica no vinco da laminação (Amostra 4)</div>
+                        <img src="imagens/ensaio_impacto_rompimento.png" class="evidence-photo" alt="Rompimento Ensaio">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 4 -->
+            <div class="section">
+                <h2>4. MATRIZ DE RASTREAMENTO DE ANOMALIAS (BOBINA 2)</h2>
+                <p style="font-size:0.92rem; color:#4a5568; margin-bottom:12px;">Classificação e identificação das não-conformidades críticas observadas nas etapas finais de estamparia e laminação do lote Bobina 2.</p>
+                <div class="anomaly-grid">
+                    <div class="anomaly-card">
+                        <img src="imagens/anomalia_asa_inseto.png" alt="Asa de inseto">
+                        <div class="card-content"><p><strong>Figura 3:</strong> Corpo estranho (asa de inseto) prensado na laminação externa.</p><span class="badge badge-danger">Crítico BPF</span></div>
+                    </div>
+                    <div class="anomaly-card">
+                        <img src="imagens/anomalia_qr_code.png" alt="QR Code Falho">
+                        <div class="card-content"><p><strong>Figura 4:</strong> Falha na transferência de tinta no QR Code.</p><span class="badge badge-info">Rastreabilidade</span></div>
+                    </div>
+                    <div class="anomaly-card">
+                        <img src="imagens/anomalia_vinco_estampa.png" alt="Vinco na estampa">
+                        <div class="card-content"><p><strong>Figura 5:</strong> Fita de urdume dobrada gerando vinco e falha linear na estampa.</p><span class="badge badge-warning">Estético</span></div>
+                    </div>
+                    <div class="anomaly-card">
+                        <img src="imagens/anomalia_bunge_microfuros.png" alt="Microfuros">
+                        <div class="card-content"><p><strong>Figura 6:</strong> Múltiplos microfuros por abrasão na marca Bunge.</p><span class="badge badge-danger">Barreira / Resistência</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 5 -->
+            <div class="section" style="page-break-before: always;">
+                <h2>5. MELHORIA CONTÍNUA IMPLEMENTADA (PROJETO KAIZEN)</h2>
+                <div class="callout">
+                    <strong>Ação Corretiva:</strong> Executada a usinagem e instalação de guias laterais de Nylon de engenharia no conjunto de passagem e tracionamento do tecido. A substituição do ponto de atrito rígido pelo Nylon mitigou completamente o desgaste abrasivo na lateral do tecido, sanando na raiz a ocorrência de microfuros e aumentando consideravelmente a resistência da embalagem nos testes de impacto vertical.
+                </div>
+                <div class="kaizen-image">
+                    <img src="imagens/melhoria_kaizen_roletes.png" alt="Projeto Kaizen">
+                    <figcaption style="font-size:8.3pt; color:#5d6d7e; margin-top:6px;"><strong>Figura 7:</strong> Roletes de tração com guias de Nylon de engenharia instaladas.</figcaption>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 6 - 5W2H COMPLETO -->
+            <div class="section">
+                <h2>6. ANÁLISE DE CAUSA RAIZ – 5W2H</h2>
+                <div style="background:#fff3cd; border:1px solid #f39c12; border-radius:6px; padding:12px 16px; margin-bottom:14px; font-weight:600; color:#856404; font-size:9pt;">
+                    <strong>Problema Principal:</strong> Ocorrência de múltiplos microfuros por abrasão na lateral da embalagem de ráfia laminada (marca Bunge) – Bobina 2.
+                </div>
+
+                <table class="w2h-table">
+                    <thead><tr><th>Pergunta</th><th>Resposta</th></tr></thead>
+                    <tbody>
+                        <tr><th>O QUÊ?</th><td>Microfuros por abrasão na laminação externa da embalagem.</td></tr>
+                        <tr><th>POR QUÊ? (Causa Imediata)</th><td>Atrito excessivo do tecido contra superfície metálica rígida durante o tracionamento.</td></tr>
+                        <tr class="w2h-root"><th>POR QUÊ? (Causa Raiz)</th><td><strong>Ausência de material de baixa fricção (Nylon) nas guias laterais do rolete de tração.</strong></td></tr>
+                        <tr><th>ONDE?</th><td>Conjunto de passagem e tracionamento do tecido (linha de laminação).</td></tr>
+                        <tr><th>QUANDO?</th><td>Durante produção da Bobina 2 após regulagem de vazão em 125.</td></tr>
+                        <tr><th>QUEM?</th><td>Equipe de produção / M. Prestes Grigol (auditoria).</td></tr>
+                        <tr><th>COMO?</th><td>Tecido desliza sobre metal → atrito → aquecimento → degradação do filme → microfuros.</td></tr>
+                        <tr><th>QUANTO?</th><td>Múltiplos microfuros identificados (Fardo 8 e anomalias críticas).</td></tr>
+                    </tbody>
+                </table>
+
+                <div style="background: linear-gradient(90deg, #eafaf1 0%, #fdfefe 100%); border:2px solid #16a085; border-radius:6px; padding:14px 18px; margin-top:14px; font-size:9.3pt; color: #1a5276; font-weight: 500;">
+                    <strong>Conclusão:</strong> A causa raiz foi eliminada com a instalação das guias de Nylon (ação Kaizen). O problema foi sanado na raiz, comprovando estabilidade nos fardos subsequentes.
+                </div>
+            </div>
+
+            <!-- RODAPÉ -->
+            <footer class="report-footer">
+                <div>Documento de uso interno • Unidade Industrial Santa Catarina</div>
+                <div>Elaborado por: <strong>M. Prestes Grigol</strong> • 10/07/2026</div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX MODAL PARA AMPLIAÇÃO DE IMAGENS -->
+    <div class="lightbox" id="lightboxModal" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <div class="lightbox-content-box" onclick="event.stopPropagation()">
+            <img class="lightbox-img" id="lightboxImg" src="" alt="Ampliação">
+            <div class="lightbox-caption" id="lightboxCaption">Legenda da Imagem</div>
+        </div>
+    </div>
+
+    <!-- Script Javascript -->
+    <script src="script.js"></script>
+</body>
+</html>
