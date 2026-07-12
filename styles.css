@@ -228,6 +228,20 @@ body.theme-light .icon-moon { display: block; }
     padding: 0 24px;
 }
 
+.dashboard-charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-charts-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+
 .dashboard-header {
     display: flex;
     justify-content: space-between;
